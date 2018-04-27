@@ -1,0 +1,31 @@
+{
+  "name": "neutrino-preset-koa",
+  "version": "1.0.0",
+  "description": "Neutrino preset for Koa NodeJS projects",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "neutrino lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/constgen/neutrino-preset-koa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/constgen/neutrino-preset-koa/issues"
+  },
+  "homepage": "https://github.com/constgen/neutrino-preset-koa#readme",
+  "dependencies": {
+	  "@neutrinojs/node": "~8.2.3",
+	  "@neutrinojs/clean": "~8.2.3"
+  },
+  "peerDependencies": {
+	  "webpack": "*"
+  },
+  "devDependencies": {
+	  "webpack": "3.x.x",
+	  "@atomspace/eslint": "~2.0.0"
+  }
+}
