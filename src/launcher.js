@@ -2,18 +2,20 @@
 
 let http = require('http');
 // let getIPs = require('./get-ips');
+// https://github.com/indexzero/http-server/blob/master/bin/http-server
 
 const PORT = process.env.PORT;
+const HOST = process.env.HOST;
 let app = require('__entry__');
 let currentApp = app.callback();
-let server = http.createServer(currentApp).listen(PORT, function (err) {
+let server = http.createServer(currentApp).listen({port: PORT, host: HOST}, function (err) {
     if (err) {
-        console.error(err);
+        throw err;
     }
     else {
-        let { port } = this.address();
+        let { port, address } = this.address();
         let protocol = this.addContext ? 'https' : 'http';
-        console.log(`Server started on: ${protocol}://localhost:${port}`);
+        console.log(`Server started on: ${protocol}://${address}:${port}`);
     }
 });
 
@@ -30,7 +32,8 @@ if (module.hot) {
     });
     module.hot.accept();
     module.hot.dispose(function () {
-        console.log('Server stopped');
+		process.removeAllListeners('exit')
+        console.log('Server stopped. Restarting...');
         server.close();
     });
 }

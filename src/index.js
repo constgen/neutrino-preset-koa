@@ -20,6 +20,7 @@ module.exports = function (neutrino, settings = {}) {
     neutrino.use(node, {
         //https
         //http2
+        //get-port
         hot: true,
         targets: {
             node: settings.node
@@ -57,7 +58,8 @@ module.exports = function (neutrino, settings = {}) {
             .end()
         .plugin('define')
             .use(DefinePlugin, [{
-                'process.env.PORT': `process.env.PORT || ${settings.server.port}`
+                'process.env.PORT': `process.env.PORT || ${settings.server.port}`,
+                'process.env.HOST': `process.env.HOST || '0.0.0.0'`
             }])
             .end();
 };
