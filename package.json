@@ -19,7 +19,8 @@
   "homepage": "https://github.com/constgen/neutrino-preset-koa#readme",
   "dependencies": {
 	  "@neutrinojs/node": "~8.2.3",
-	  "@neutrinojs/clean": "~8.2.3"
+	  "@neutrinojs/clean": "~8.2.3",
+	  "chalk": "~2.4.1"
   },
   "peerDependencies": {
 	  "webpack": "*",

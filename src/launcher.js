@@ -1,6 +1,7 @@
 'use strict';
 
 let http = require('http');
+let chalk = require('chalk');
 let ip = require('./ip');
 
 const PORT = process.env.PORT;
@@ -15,8 +16,8 @@ let server = http.createServer(currentApp).listen({port: PORT, host: HOST}, func
         let { port, address } = this.address();
 		let protocol = this.addContext ? 'https' : 'http';
 		let ips = ip.isLocal(HOST) ? ip.locals : ip.all;
-		let message = `Server started on: ${ips.map(function(ip){
-			return `${protocol}://${ip}${port !== 80 ? `:${port}` : ''}`
+		let message = `${chalk.blue('Server started on')}: ${ips.map(function(ip){
+			return chalk.green(`${protocol}://${ip}${port !== 80 ? `:${port}` : ''}`);
 		}).join(', ')}`;
 		console.log(message);
     }
@@ -30,12 +31,12 @@ if (module.hot) {
             currentApp = app.callback();
             server.on('request', currentApp);
         } catch (err) {
-            console.error(err);
+			console.error(chalk.red(err));
         }
     });
     module.hot.accept();
     module.hot.dispose(function () {
-        console.log('Server stopped. Restarting...');
+        console.log(chalk.blue('Server stopped. Restarting...'));
         server.close();
     });
 }
