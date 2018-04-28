@@ -1,8 +1,7 @@
 'use strict';
 
 let http = require('http');
-// let getIPs = require('./get-ips');
-// https://github.com/indexzero/http-server/blob/master/bin/http-server
+let ip = require('./ip');
 
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
@@ -14,8 +13,12 @@ let server = http.createServer(currentApp).listen({port: PORT, host: HOST}, func
     }
     else {
         let { port, address } = this.address();
-        let protocol = this.addContext ? 'https' : 'http';
-        console.log(`Server started on: ${protocol}://${address}:${port}`);
+		let protocol = this.addContext ? 'https' : 'http';
+		let ips = ip.isLocal(HOST) ? ip.locals : ip.all;
+		let message = `Server started on: ${ips.map(function(ip){
+			return `${protocol}://${ip}${port !== 80 ? `:${port}` : ''}`
+		}).join(', ')}`;
+		console.log(message);
     }
 });
 
@@ -32,7 +35,6 @@ if (module.hot) {
     });
     module.hot.accept();
     module.hot.dispose(function () {
-		process.removeAllListeners('exit')
         console.log('Server stopped. Restarting...');
         server.close();
     });

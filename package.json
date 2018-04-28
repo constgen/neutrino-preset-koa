@@ -22,7 +22,8 @@
 	  "@neutrinojs/clean": "~8.2.3"
   },
   "peerDependencies": {
-	  "webpack": "*"
+	  "webpack": "*",
+	  "koa": "^2.0.0"
   },
   "devDependencies": {
 	  "webpack": "3.x.x",
