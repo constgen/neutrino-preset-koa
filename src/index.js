@@ -8,12 +8,13 @@ let { EnvironmentPlugin, DefinePlugin } = require('webpack');
 module.exports = function (neutrino, settings = {}) {
     const NODE_MODULES = path.resolve(__dirname, '../node_modules');
     const LAUNCHER_PATH = path.resolve(__dirname, './launcher.js');
-    let useLauncher = (settings.server !== undefined) ? Boolean(settings.server) : true;
+	let useLauncher = (settings.server !== undefined) ? Boolean(settings.server) : true;
+	let port = settings.server && Number(settings.server.port)
 
     settings = {
         node: settings.node || process.versions.node,
         server: {
-            port: settings.server && Number(settings.server.port) || 80
+            port: (port || port === 0) ? port : 80
         }
     };
 
