@@ -27,6 +27,7 @@
 	  "koa": "^2.0.0"
   },
   "devDependencies": {
+	  "neutrino": "~8.2.3",
 	  "webpack": "3.x.x",
 	  "@atomspace/eslint": "~2.0.0"
   },
