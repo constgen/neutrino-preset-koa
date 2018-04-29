@@ -19,13 +19,21 @@
   "homepage": "https://github.com/constgen/neutrino-preset-koa#readme",
   "dependencies": {
 	  "@neutrinojs/node": "~8.2.3",
-	  "@neutrinojs/clean": "~8.2.3"
+	  "@neutrinojs/clean": "~8.2.3",
+	  "chalk": "~2.4.1"
   },
   "peerDependencies": {
-	  "webpack": "*"
+	  "webpack": "*",
+	  "koa": "^2.0.0"
   },
   "devDependencies": {
 	  "webpack": "3.x.x",
 	  "@atomspace/eslint": "~2.0.0"
-  }
+  },
+  "files": [
+	  "src",
+	  "package.json",
+	  "LICENSE",
+	  "README.md"
+  ]
 }

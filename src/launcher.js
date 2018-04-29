@@ -3,8 +3,8 @@ import { setTimeout } from 'timers';
 'use strict';
 
 let http = require('http');
-// let getIPs = require('./get-ips');
-// https://github.com/indexzero/http-server/blob/master/bin/http-server
+let chalk = require('chalk');
+let ip = require('./ip');
 
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
@@ -17,8 +17,12 @@ let server = http.createServer(currentApp).listen({port: PORT, host: HOST}, func
     }
     else {
         let { port, address } = this.address();
-        let protocol = this.addContext ? 'https' : 'http';
-        console.log(`Server started on: ${protocol}://${address}:${port}`);
+		let protocol = this.addContext ? 'https' : 'http';
+		let ips = ip.isLocal(HOST) ? ip.locals : ip.all;
+		let message = `${chalk.blue('Server started on')}: ${ips.map(function(ip){
+			return chalk.green(`${protocol}://${ip}${port !== 80 ? `:${port}` : ''}`);
+		}).join(', ')}`;
+		console.log(message);
     }
 });
 
@@ -30,13 +34,12 @@ if (module.hot) {
             currentApp = app.callback();
             server.on('request', currentApp);
         } catch (err) {
-            console.error(err);
+			console.error(chalk.red(err));
         }
     });
     module.hot.accept();
     module.hot.dispose(function () {
-		process.removeAllListeners('exit')
-        console.log('Server stopped. Restarting...');
+        console.log(chalk.blue('Server stopped. Restarting...'));
         server.close();
     });
 }
