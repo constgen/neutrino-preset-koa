@@ -1,6 +1,6 @@
 # Neutrino Koa Preset
 
-Neutrino preset that supports building of Koa NodeJS applications.
+Neutrino preset for building of Koa Node.js applications.
 
 [![NPM version][npm-image]](npm-url)
 [![NPM downloads][npm-downloads]](npm-url)
@@ -11,8 +11,8 @@ Neutrino preset that supports building of Koa NodeJS applications.
 - Modern Babel compilation supporting ES modules, async functions, and dynamic imports
 - Supports automatically-wired sourcemaps
 - Tree-shaking to create smaller bundles
-- Built-in HTTP server for launching an application on development and production.
-- Hot Module Replacement with source-watching during development. 
+- Built-in HTTP server for launching an application on development and production
+- Hot Module Replacement with source-watching during development
 - Change your files without restarting a server
 - Chunking of external dependencies apart from application code
 - Automatically discovers free HTTP port to run a server
@@ -20,7 +20,7 @@ Neutrino preset that supports building of Koa NodeJS applications.
 
 ## Requirements
 
-- NodeJS v6.9+
+- Node.js v6.9+
 - npm v5.4+
 - Neutrino v8
 - Koa v2
@@ -62,7 +62,7 @@ Edit your `src/index.js` file with the following:
 let Koa = require('koa')
 
 module.exports = new Koa()
-   .use(function ({ response }) {
+   .use(function ({ request, response }) {
       response.body = {
          success: true
       };
@@ -73,9 +73,9 @@ module.exports = new Koa()
    // don't call .listen()
 ```
 
-**Important:** This preset requires your entry point to export an instance of Koa application. But you don't need to start it by calling `listen()` method. The preset has a built-in launch server that will do it internally. You can only [customize](#Customizing) the server in the preset options.
+**Important:** This preset requires your entry point to export an instance of Koa application. But you don't need to start it by calling `listen()` method. The preset has a built-in launch server that will do it internally. You can only [customize](#customizing) the server in the preset options.
 
-Now edit your project's `package.json` to add commands for starting and building the application.
+Now edit your project's 'package.json' to add commands for starting and building the application.
 
 ```json
 {
@@ -108,7 +108,7 @@ Server started on: http://192.168.31.5:50274, http://127.0.0.1:50274, http://MyH
 {"success":true}
 ```
 
-The server will automatically choose a free **port** by default in development mode. So it may differ on every run and in your particular case.
+The server will automatically choose a free **port** by default in a development mode. So it may differ on every run and in your particular case.
 
 ## Building
 
@@ -128,7 +128,7 @@ index.js.map  3.73 kB       0  [emitted]  index
 ```
 
 You can either serve or deploy the contents of this `build` directory as a Node.js server. For Node.js
-this usually means adding a `main` property to package.json pointing to the primary main built entry point. Also it is recommended to add a private flag to not accidentally publish your server.
+this usually means adding a `main` property to 'package.json' pointing to the primary main built entry point. Also it is recommended to add a private flag to not accidentally publish your server.
 
 ```json
 {
@@ -156,7 +156,11 @@ Using dynamic imports with `import()` will automatically create split points and
 ## Debugging
 
 You can start the Node.js server in `inspect` mode to debug the process by setting `neutrino.options.debug` to `true`.
-This can be done from the [API](https://neutrino.js.org/api#optionsdebug) or the [CLI using `--debug`](https://neutrino.js.org/cli#-debug).
+This can be done from the [API](https://neutrino.js.org/api#optionsdebug) or the [CLI using `--debug`](https://neutrino.js.org/cli#-debug). e.g:
+
+```bash
+neutrino start --debug
+```
 
 ## Preset options
 
@@ -182,9 +186,9 @@ module.exports = {
 
 ## Customizing
 
-By default Neutrino, and therefore this preset, creates a single **main** `index` entry point to your application, and this maps to the `index.*` file in the `src` directory. This preset has a limitation - it supports only a single entry point. Defining 2 or more may cause it to work not properly. Code not imported in the hierarchy of the entry will not be output to the bundle.
+By default Neutrino, and therefore this preset, creates a single **main** `index` entry point to your application, and this maps to the `index.*` file in the `src` directory. This preset has a limitation – it supports only a single entry point. Defining 2 or more may cause it to work not properly. Code not imported in the hierarchy of the entry will not be output to the bundle.
 
-You can customize a single entry point in your `.neutrinorc.js`
+You can customize a single entry point in your `.neutrinorc.js` and override default one
 
 ```js
 module.exports = {
@@ -197,7 +201,7 @@ module.exports = {
 };
 ```
 
-To overcome this limitation you can define multiple configurations
+To overcome the limitation you can define multiple configurations
 
 ```js
 module.exports = [
@@ -222,7 +226,7 @@ module.exports = [
 
 ### Launcher
 
-This preset wraps your application with HTTP server that launches your application. It can be configured using `server` property in the [preset options](#Preset-options)
+This preset wraps your application with HTTP server that launches your application. It can be configured using `server` property in the [preset options](#preset-options)
 
 ```js
 ['neutrino-preset-koa', {
@@ -232,7 +236,7 @@ This preset wraps your application with HTTP server that launches your applicati
 
 So you don't need to think about how to serve your application. This is the purpose of the `neutrino-preset-koa` preset.
 
-If you want to completely disable the launcher you need to explicitly set option to `false`
+If you want to completely disable the launcher you need to explicitly set the option to `false`
 
 
 ```js
@@ -241,7 +245,7 @@ If you want to completely disable the launcher you need to explicitly set option
 }]
 ```
 
-This turns your application to a regular NodeJS application and disables all advantages of this preset. You will have to call `listen()` on `Koa` instance by yourself if you need to start a server. 
+This turns your application into a regular Node.js application and disables all advantages of this preset. You will have to call `listen()` on `Koa` instance by yourself if you need to start a server. 
 
 Disabling the launcher not for debugging purposes is not recommended. Probably you might need [@neutrinojs/node](https://www.npmjs.com/package/@neutrinojs/node) instead in this case.
 
@@ -249,7 +253,7 @@ Disabling the launcher not for debugging purposes is not recommended. Probably y
 
 There are multiple ways to customize an HTTP port of your application server.
 
-You can configure a **default** port of the application server in options using `server.port` property the [preset options](#Preset-options). For example: 
+You can configure a **default** port of the server in options using `server.port` property in the [preset options](#preset-options). For example: 
 
 ```js
 ['neutrino-preset-koa', {
@@ -261,7 +265,7 @@ You can configure a **default** port of the application server in options using 
 
 Now your server will start on `8080` in both production and development modes. But this port is considered **default** and may be overridden any time by `PORT` environment variable. This may be useful for production environments as the server will check `process.env.PORT` in the runtime first and then fallback to a port you have defined.
 
-The default behavior of port is to default to `80` on production and to take random free default port on development.
+The default behavior of port when not configured is to default to `80` on production and to take random free default port on development.
 
 You can force random free port on both production and development by passing one of these values: `false`, `null`, `0`. For example:
 
@@ -277,7 +281,7 @@ You can force random free port on both production and development by passing one
 
 ### Node
 
-You can change the minimum NodeJS version to be supported by your application. Babel compiler will consider this and output a code with the necessary syntax. You can do this changing `node` property in the [preset options](#Preset-options). For example:
+You can change the minimum Node.js version to be supported by your application. Babel compiler will consider this and output a code with the necessary syntax. You can do this changing `node` property in the [preset options](#preset-options). For example:
 
 ```js
 ['neutrino-preset-koa', {
@@ -288,7 +292,7 @@ You can change the minimum NodeJS version to be supported by your application. B
 ### Vendoring
 
 This preset automatically vendors all external dependencies into a separate chunk based on their inclusion in your
-package.json. No extra work is required to make this work.
+'package.json'. No extra work is required to make this work.
 
 
 [npm-image]: https://img.shields.io/npm/v/neutrino-preset-koa.svg
