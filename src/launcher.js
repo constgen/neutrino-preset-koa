@@ -33,28 +33,15 @@ function close () {
 		process.exit();
 	});
 
-	// process.exitCode = 0
 	setTimeout(function () {
 		console.log(chalk.red('Server killed, due to timeout'));
 		process.exit(1);
 	}, KILL_TIMEOUT);
 }
+
 function handleExit () {
 	console.log(chalk.yellow('Application exited'));
 }
-
-// http://glynnbird.tumblr.com/post/54739664725/graceful-server-shutdown-with-nodejs-and-express
-// if (process.platform === 'win32') {
-//     require('readline').createInterface({
-//         input: process.stdin,
-//         output: process.stdout
-//     }).on('SIGINT', function () {
-//         process.emit('SIGINT');
-//     });
-// }
-// process.title = ''
-// process.stdin.resume();
-
 
 KILL_SIGNALS.forEach(function (signal) {
 	process.once(signal, close);
