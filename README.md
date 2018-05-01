@@ -16,12 +16,13 @@ Neutrino preset that supports building of Koa NodeJS applications.
 - Change your files without restarting a server
 - Chunking of external dependencies apart from application code
 - Automatically discovers free HTTP port to run a server
+- Graceful server shutdown
 - Easily extensible to customize your project as needed
 
 ## Requirements
 
 - NodeJS v6.9+
-- npm v5.4+
+- npm v3.8.1+
 - Neutrino v8
 - Koa v2
 

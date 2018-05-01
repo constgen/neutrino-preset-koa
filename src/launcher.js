@@ -27,20 +27,22 @@ let server = http.createServer(currentApp).listen({ port: PORT, host: HOST }, fu
 });
 
 function close () {
-	console.log(chalk.blue('Server shutting down...'));
-	server.close(function () {
-		console.log(chalk.blue('Server closed'));
-		process.exit();
-	});
+	console.log(chalk.blue('Server shutting down...'), '');
 
-	setTimeout(function () {
-		console.log(chalk.red('Server killed, due to timeout'));
+	let timeout = setTimeout(function () {
+		console.log(chalk.red('Server killed due to timeout'));
 		process.exit(1);
 	}, KILL_TIMEOUT);
+
+	server.close(function () {
+		console.log(chalk.blue('Server closed'), '');
+		clearTimeout(timeout);
+		process.exitCode = 0;
+	});
 }
 
 function handleExit () {
-	console.log(chalk.yellow('Application exited'));
+	console.log(chalk.yellow('Application exited'), '');
 }
 
 KILL_SIGNALS.forEach(function (signal) {

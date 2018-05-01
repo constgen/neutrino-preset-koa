@@ -11,7 +11,7 @@
     "url": "git+https://github.com/constgen/neutrino-preset-koa.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Constantine Genchevsky <const.gen@gmail.com>",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/constgen/neutrino-preset-koa/issues"
@@ -36,5 +36,8 @@
 	  "package.json",
 	  "LICENSE",
 	  "README.md"
-  ]
+  ],
+  "engines": {
+    "npm": ">=3.8.1"
+  }
 }

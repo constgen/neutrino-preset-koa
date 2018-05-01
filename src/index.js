@@ -11,6 +11,7 @@ module.exports = function (neutrino, settings = {}) {
 	let useLauncher = (settings.server !== undefined) ? Boolean(settings.server) : true;
 	let port = settings.server && Number(settings.server.port);
 	let defaultPort = devRun ? 0 : 80;
+	let defaultHost = '';
 
 	settings.node = settings.node || process.versions.node;
 	settings.server = {
@@ -53,7 +54,7 @@ module.exports = function (neutrino, settings = {}) {
 		.plugin('define')
 			.use(DefinePlugin, [{
 				'process.env.PORT': `process.env.PORT || ${settings.server.port}`,
-				'process.env.HOST': `process.env.HOST || '0.0.0.0'`
+				'process.env.HOST': `process.env.HOST || '${defaultHost}'`
 			}])
 			.end();
 };
