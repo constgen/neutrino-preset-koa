@@ -2,7 +2,10 @@ module.exports = {
 	use: [
 		['@atomspace/eslint', {
 			eslint: {
-				envs: ['node']
+				envs: ['node'],
+				rules: {
+					'no-console': 'off'
+				}
 			}
 		}]
 	]

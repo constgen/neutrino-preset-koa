@@ -276,6 +276,10 @@ You can force random free port on both production and development by passing one
 
 `PORT` environment variable will always have a priority over any configuration.
 
+### Host
+
+By default the server start on default IPv6/IPv4 host which exposes it to local network. There is no way to configure a server host from the [preset options](#preset-options). But you still can use `HOST` environment variable to define your custom host.
+
 ### Node
 
 You can change the minimum NodeJS version to be supported by your application. Babel compiler will consider this and output a code with the necessary syntax. You can do this changing `node` property in the [preset options](#Preset-options). For example:
@@ -291,6 +295,52 @@ You can change the minimum NodeJS version to be supported by your application. B
 This preset automatically vendors all external dependencies into a separate chunk based on their inclusion in your
 package.json. No extra work is required to make this work.
 
+## Graceful Shutdown
+
+`neutrino-preset-koa` automatically shutdowns a server instance gracefully. Application server logs this to signal successful closing when exited:
+
+```bash
+Server shutting down...
+Server closed
+```
+
+During shutdown these steps are performed
+
+1. Stop listening new requests
+2. Close all open inactive connections
+3. Wait current requests to end and close their connections at the end
+
+The preset doesn't forcefully exit a process but waits for queued operations to finish including your async middlwares. In most cases you are **not required** to handle it explicitly. But if you have some long running operations or timers outside middlewares that continues event loop then you should take care of them by yourself. Other will be handled by the preset. The good practice is to use this in your code in such cases:
+
+```js
+['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'].forEach(function (signal) {
+    process.once(signal, function(){
+    // abort all async operations
+    // cancel all timers
+    process.exitCode = 0;
+  })
+})
+```
+
+Don't call `process.exit()` as it considered a bad practice. An application should exit naturally when there is an empty call stack and no more scheduled tasks. You should see this at the very end if a finishing of an application is correct:
+
+```bash
+Application exited
+```
+
+In case your application will not finish for some reason in 9 seconds, there is a timeout that kills the application forcefully. You will not be able to handle this termination. An application will exit with an error signal right after this message
+
+```bash
+Server killed, due to timeout
+```
+
+Graceful Shutdown works correctly only in a built version which is started using 
+
+```bash
+node .
+```
+
+This is another reason to use this command on a production environment. It can't work properly when you start the server as a child process of `npm start`.
 
 [npm-image]: https://img.shields.io/npm/v/neutrino-preset-koa.svg
 [npm-downloads]: https://img.shields.io/npm/dt/neutrino-preset-koa.svg

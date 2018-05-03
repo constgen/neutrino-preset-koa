@@ -10,6 +10,7 @@ const HOST = process.env.HOST;
 const KILL_TIMEOUT = 9 * 1000;
 const KILL_SIGNALS = ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'];
 let currentApp = app.callback();
+let sockets = new Set();
 let server = http.createServer(currentApp).listen({ port: PORT, host: HOST }, function (err) {
 	if (err) {
 		throw err;
@@ -26,11 +27,27 @@ let server = http.createServer(currentApp).listen({ port: PORT, host: HOST }, fu
 	}
 });
 
+function handleConnect (socket) {
+	socket.__requestsLength = 0;
+	sockets.add(socket);
+	socket.once('close', function () {
+		sockets.delete(socket);
+	});
+}
+
+function isIdle (socket) {
+	return !socket.__requestsLength;
+}
+
+function disconnect (socket) {
+	if (isIdle(socket)) socket.destroy();
+}
+
 function close () {
 	console.log(chalk.blue('Server shutting down...'), '');
 
 	let timeout = setTimeout(function () {
-		console.log(chalk.red('Server killed due to timeout'));
+		console.log(chalk.red('Server killed, due to timeout'));
 		process.exit(1);
 	}, KILL_TIMEOUT);
 
@@ -39,11 +56,26 @@ function close () {
 		clearTimeout(timeout);
 		process.exitCode = 0;
 	});
+
+	sockets.forEach(disconnect);
 }
 
 function handleExit () {
 	console.log(chalk.yellow('Application exited'), '');
 }
+
+server.on('connection', handleConnect);
+server.on('secureConnection', handleConnect);
+server.on('request', function (request, response) {
+	let socket = request.connection;
+
+	socket.__requestsLength += 1;
+	response.once('finish', function () {
+		socket.__requestsLength -= 1;
+		if (!server.listening) disconnect(socket);
+	});
+});
+
 
 KILL_SIGNALS.forEach(function (signal) {
 	process.once(signal, close);
