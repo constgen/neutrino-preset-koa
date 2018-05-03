@@ -1,7 +1,7 @@
 {
   "name": "neutrino-preset-koa",
   "version": "1.0.0",
-  "description": "Neutrino preset for Koa NodeJS projects",
+  "description": "Neutrino preset for Koa Node.js projects",
   "main": "src/index.js",
   "scripts": {
     "pretest": "neutrino lint"
@@ -10,7 +10,14 @@
     "type": "git",
     "url": "git+https://github.com/constgen/neutrino-preset-koa.git"
   },
-  "keywords": [],
+  "keywords": [
+    "webpack",
+    "koa",
+    "neutrino",
+    "preset",
+    "neutrino-preset",
+    "node"
+  ],
   "author": "Constantine Genchevsky <const.gen@gmail.com>",
   "license": "GPL-3.0",
   "bugs": {
