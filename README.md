@@ -1,6 +1,6 @@
 # Neutrino Koa Preset
 
-Neutrino preset for building of Koa Node.js applications.
+[Neutrino](https://neutrinojs.org/) preset for building Koa Node.js applications.
 
 [![NPM version][npm-image]](npm-url)
 [![NPM downloads][npm-downloads]](npm-url)
