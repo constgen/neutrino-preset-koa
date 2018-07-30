@@ -5,7 +5,7 @@ let chalk = require('chalk');
 let ip = require('./ip');
 
 function requireKoaApp () {
-	let app = require('__entry__');
+	let app = require('__entry__'); // eslint-disable-line import/no-unresolved
 
 	app = app.default || app;
 	return app.callback();
