@@ -1,6 +1,6 @@
 {
   "name": "neutrino-preset-koa",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Neutrino preset for Koa Node.js projects",
   "main": "src/index.js",
   "scripts": {
@@ -25,24 +25,24 @@
   },
   "homepage": "https://github.com/constgen/neutrino-preset-koa#readme",
   "dependencies": {
-	  "@neutrinojs/node": "~8.2.3",
-	  "@neutrinojs/clean": "~8.2.3",
-	  "chalk": "~2.4.1"
+    "@neutrinojs/node": "~8.2.3",
+    "@neutrinojs/clean": "~8.2.3",
+    "chalk": "~2.4.1"
   },
   "peerDependencies": {
-	  "webpack": "*",
-	  "koa": "^2.0.0"
+    "webpack": "*",
+    "koa": "^2.0.0"
   },
   "devDependencies": {
-	  "neutrino": "~8.2.3",
-	  "webpack": "3.x.x",
-	  "@atomspace/eslint": "~2.0.0"
+    "neutrino": "~8.2.3",
+    "webpack": "3.x.x",
+    "@atomspace/eslint": "~2.0.0"
   },
   "files": [
-	  "src",
-	  "package.json",
-	  "LICENSE",
-	  "README.md"
+    "src",
+    "package.json",
+    "LICENSE",
+    "README.md"
   ],
   "engines": {
     "npm": ">=3.8.1"
