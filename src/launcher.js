@@ -1,15 +1,21 @@
 let http = require('http');
 
 let chalk = require('chalk');
-let app = require('__entry__');
 
 let ip = require('./ip');
+
+function requireKoaApp () {
+	let app = require('__entry__');
+
+	app = app.default || app;
+	return app.callback();
+}
 
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 const KILL_TIMEOUT = 9 * 1000;
 const KILL_SIGNALS = ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'];
-let currentApp = app.callback();
+let currentApp = requireKoaApp();
 let sockets = new Set();
 let server = http.createServer(currentApp).listen({ port: PORT, host: HOST }, function (err) {
 	if (err) {
@@ -87,8 +93,7 @@ if (module.hot) {
 	module.hot.accept('__entry__', function () {
 		try {
 			server.removeListener('request', currentApp);
-			app = require('__entry__');
-			currentApp = app.callback();
+			currentApp = requireKoaApp();
 			server.on('request', currentApp);
 		} catch (err) {
 			console.error(chalk.red(err));
