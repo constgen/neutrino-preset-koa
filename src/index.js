@@ -1,7 +1,8 @@
 let path = require('path');
 
 let node = require('@neutrinojs/node');
-const clean = require('@neutrinojs/clean');
+let clean = require('@neutrinojs/clean');
+let banner = require('@neutrinojs/banner');
 let { DefinePlugin } = require('webpack');
 
 module.exports = function (neutrino, settings = {}) {
@@ -27,6 +28,7 @@ module.exports = function (neutrino, settings = {}) {
 	neutrino.use(clean, {
 		paths: [neutrino.options.output]
 	});
+	neutrino.use(banner);
 
 	if (!useLauncher) return;
 

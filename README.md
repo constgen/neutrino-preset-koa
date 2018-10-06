@@ -9,7 +9,7 @@
 
 - Zero upfront configuration necessary to start developing and building a Koa project
 - Modern Babel compilation supporting ES modules, async functions, and dynamic imports
-- Supports automatically-wired sourcemaps
+- Sourcemaps
 - Tree-shaking to create smaller bundles
 - Built-in HTTP server for launching an application on development and production
 - Hot Module Replacement with source-watching during development
@@ -33,13 +33,6 @@
 ```bash
 ❯ npm install --save-dev neutrino neutrino-preset-koa
 ❯ npm install --save koa
-```
-
-If you want to have automatically wired sourcemaps added to your project, add `source-map-support`:
-
-
-```bash
-❯ npm install --save source-map-support
 ```
 
 ## Project Layout
