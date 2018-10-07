@@ -5,6 +5,10 @@ let clean = require('@neutrinojs/clean');
 let banner = require('@neutrinojs/banner');
 let { DefinePlugin } = require('webpack');
 
+let manifest = require(path.resolve(process.cwd(), 'package.json'));
+
+process.title = manifest.name;
+
 module.exports = function (neutrino, settings = {}) {
 	const NODE_MODULES = path.resolve(__dirname, '../node_modules');
 	const LAUNCHER_PATH = path.resolve(__dirname, './launcher.js');
@@ -28,7 +32,11 @@ module.exports = function (neutrino, settings = {}) {
 	neutrino.use(clean, {
 		paths: [neutrino.options.output]
 	});
-	neutrino.use(banner);
+	neutrino.use(banner, { pluginId: 'sourcemaps' });
+	neutrino.use(banner, {
+		pluginId: 'process-title',
+		banner: `process.title = '${process.title}'`
+	});
 
 	if (!useLauncher) return;
 
@@ -53,7 +61,7 @@ module.exports = function (neutrino, settings = {}) {
 		.resolveLoader.modules
 			.add(NODE_MODULES)
 			.end().end()
-		.plugin('define')
+		.plugin('define-env')
 			.use(DefinePlugin, [{
 				'process.env.PORT': `process.env.PORT || ${settings.server.port}`,
 				'process.env.HOST': `process.env.HOST || '${defaultHost}'`
