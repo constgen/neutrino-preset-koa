@@ -104,6 +104,8 @@ KILL_SIGNALS.forEach(function (signal) {
 
 process.once('exit', handleExit);
 
+log(`PID: ${process.pid}`);
+
 if (module.hot) {
 	module.hot.accept('__entry__', function () {
 		try {
