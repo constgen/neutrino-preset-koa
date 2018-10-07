@@ -18,6 +18,8 @@
 - Automatically discovers free HTTP port to run a server
 - Graceful server shutdown
 - Easily extensible to customize your project as needed
+- Shows PID (Process ID) in console
+- Sets a NodeJS process name to a project name (only Linux and MacOS). So can be easily foud with `ps x | grep myname`
 
 ## Requirements
 
@@ -94,7 +96,11 @@ Start the app, then either open a browser and navigate to one of the provided ad
 ❯ npm start
 
 √ Build completed
-Server started on: http://192.168.31.5:50274, http://127.0.0.1:50274, http://MyHome-PC:50274, http://localhost:50274
+Server started on:
+  http://192.168.31.5:50274
+  http://127.0.0.1:50274
+  http://MyHome-PC:50274
+  http://localhost:50274
 ```
 
 ```bash
