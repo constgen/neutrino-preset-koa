@@ -24,7 +24,7 @@ module.exports = function (neutrino, settings = {}) {
 	};
 
 	neutrino.use(node, {
-		hot: true,
+		hot: useLauncher,
 		targets: {
 			node: settings.node
 		}
@@ -38,20 +38,23 @@ module.exports = function (neutrino, settings = {}) {
 		banner: `process.title = '${process.title}'`
 	});
 
-	if (!useLauncher) return;
-
 	Object.keys(neutrino.options.mains).forEach(function (key) {
 		neutrino.config
 			.entry(key)
-				.clear()
-				.add(LAUNCHER_PATH)
-				.when(devRun, function (entry) {
+				.when(useLauncher, function (entry) {
+					entry.clear().add(LAUNCHER_PATH);
+				})
+				.when(useLauncher && devRun, function (entry) {
 					entry.add(`${require.resolve('webpack/hot/poll')}?1000`);
 				})
 				.end()
-			.resolve.alias
-				.set('__entry__', require.resolve(neutrino.options.mains[key]))
-				.end().end();
+			.when(useLauncher, function (config) {
+				config
+					.resolve.alias
+						.set('__entry__', require.resolve(neutrino.options.mains[key]))
+						.end().end();
+			});
+
 	});
 
 	neutrino.config
