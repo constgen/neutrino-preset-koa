@@ -15,8 +15,22 @@ const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 const KILL_TIMEOUT = 9 * 1000;
 const KILL_SIGNALS = ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'];
+let title = process.title;
 let currentApp = requireKoaApp();
 let sockets = new Set();
+
+function log (message) {
+	console.log(`[${title}] ${chalk.blue(message)}`, '');
+}
+
+function warn (message) {
+	console.warn(`[${title}] ${chalk.yellow(message)}`, '');
+}
+
+function report (err) {
+	console.error(chalk.red(err.stack), '');
+}
+
 let server = http.createServer(currentApp).listen({ port: PORT, host: HOST }, function (err) {
 	if (err) {
 		throw err;
@@ -25,11 +39,12 @@ let server = http.createServer(currentApp).listen({ port: PORT, host: HOST }, fu
 		let { port, address } = server.address();
 		let protocol = server.addContext ? 'https' : 'http';
 		let ips = ip.isLocal(address) ? ip.locals : ip.all;
-		let message = `${chalk.blue('Server started on')}: ${ips.map(function (host) {
-			return chalk.green(`${protocol}://${host}${port !== 80 ? `:${port}` : ''}`);
-		}).join(', ')}`;
+		let message = ['Server started on:']
+			.concat(ips.map(function (host) {
+				return chalk.green(`${protocol}://${host}${port !== 80 ? `:${port}` : ''}`);
+			})).join('\n  ');
 
-		console.log(message);
+		log(message);
 	}
 });
 
@@ -50,15 +65,15 @@ function disconnect (socket) {
 }
 
 function close () {
-	console.log(chalk.blue('Server shutting down...'), '');
+	log('Server shutting down...');
 
 	let timeout = setTimeout(function () {
-		console.log(chalk.red('Server killed, due to timeout'));
+		report('Server killed, due to timeout');
 		process.exit(1);
 	}, KILL_TIMEOUT);
 
 	server.close(function () {
-		console.log(chalk.blue('Server closed'), '');
+		log('Server closed');
 		clearTimeout(timeout);
 		process.exitCode = 0;
 	});
@@ -67,7 +82,7 @@ function close () {
 }
 
 function handleExit () {
-	console.log(chalk.yellow('Application exited'), '');
+	warn('Application exited');
 }
 
 server.on('connection', handleConnect);
@@ -96,7 +111,7 @@ if (module.hot) {
 			currentApp = requireKoaApp();
 			server.on('request', currentApp);
 		} catch (err) {
-			console.error(chalk.red(err));
+			report(err);
 		}
 	});
 	module.hot.accept();
@@ -105,7 +120,7 @@ if (module.hot) {
 			process.removeListener(signal, close);
 		});
 		process.removeListener('exit', handleExit);
-		console.log(chalk.blue('Server stopped. Restarting...'));
+		log('Server stopped. Restarting...');
 		server.close();
 	});
 }
