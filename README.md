@@ -17,9 +17,10 @@
 - Chunking of external dependencies apart from application code
 - Automatically discovers free HTTP port to run a server
 - Graceful server shutdown
+- Logs to `stdout` and `stderr`. No pollution to console
+- Shows PID (Process ID) in output
+- **Only Linux and MacOS:** Sets a NodeJS process name to a project name. So can be easily found with `ps x | grep myname`
 - Easily extensible to customize your project as needed
-- Shows PID (Process ID) in console
-- Sets a NodeJS process name to a project name (only Linux and MacOS). So can be easily foud with `ps x | grep myname`
 
 ## Requirements
 

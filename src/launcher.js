@@ -18,17 +18,18 @@ const KILL_SIGNALS = ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'];
 let title = process.title;
 let currentApp = requireKoaApp();
 let sockets = new Set();
+let { stdout, stderr } = process;
 
 function log (message) {
-	console.log(`[${title}] ${chalk.blue(message)}`, '');
+	stdout.write(`[${title}] ${chalk.blue(message)}\n`);
 }
 
 function warn (message) {
-	console.warn(`[${title}] ${chalk.yellow(message)}`, '');
+	stdout.write(`[${title}] ${chalk.yellow(message)}\n`);
 }
 
 function report (err) {
-	console.error(chalk.red(err.stack), '');
+	stderr.write(`${chalk.red(err.stack)}\n`);
 }
 
 let server = http.createServer(currentApp).listen({ port: PORT, host: HOST }, function (err) {
