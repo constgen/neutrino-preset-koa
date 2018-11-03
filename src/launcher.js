@@ -13,6 +13,7 @@ function requireKoaApp () {
 
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
+const DEFAULT_PORT = 80;
 const KILL_TIMEOUT = 9 * 1000;
 const KILL_SIGNALS = ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'];
 let title = process.title;
@@ -20,7 +21,7 @@ let currentApp = requireKoaApp();
 let sockets = new Set();
 let { stdout, stderr } = process;
 
-function log (message) {
+function output (message) {
 	stdout.write(`[${title}] ${chalk.blue(message)}\n`);
 }
 
@@ -28,26 +29,33 @@ function warn (message) {
 	stdout.write(`[${title}] ${chalk.yellow(message)}\n`);
 }
 
-function report (err) {
-	stderr.write(`${chalk.red(err.stack)}\n`);
+function log (message) {
+	stdout.write(`[${title}] ${chalk.blue(message)}\n`);
 }
 
-let server = http.createServer(currentApp).listen({ port: PORT, host: HOST }, function (err) {
-	if (err) {
-		throw err;
-	}
-	else {
-		let { port, address } = server.address();
-		let protocol = server.addContext ? 'https' : 'http';
-		let ips = ip.isLocal(address) ? ip.locals : ip.all;
-		let message = ['Server started on:']
-			.concat(ips.map(function (host) {
-				return chalk.green(`${protocol}://${host}${port !== 80 ? `:${port}` : ''}`);
-			})).join('\n  ');
+function report (err) {
+	console.error(`${chalk.red(err.stack)}\n`);
+}
 
-		log(message);
+let server = http.createServer(currentApp).listen(
+	{ port: PORT, host: HOST },
+	function (err) {
+		if (err) {
+			throw err;
+		}
+		else {
+			let { port, address } = server.address();
+			let protocol = server.addContext ? 'https' : 'http';
+			let ips = ip.isLocal(address) ? ip.locals : ip.all;
+			let message = ['Server started on:']
+				.concat(ips.map(function (host) {
+					return chalk.green(`${protocol}://${host}${port === DEFAULT_PORT ? '' : `:${port}`}`);
+				})).join('\n  ');
+
+			log(message);
+		}
 	}
-});
+);
 
 function handleConnect (socket) {
 	socket.__requestsLength = 0;
@@ -66,7 +74,7 @@ function disconnect (socket) {
 }
 
 function close () {
-	log('Server shutting down...');
+	output('Server shutting down...');
 
 	let timeout = setTimeout(function () {
 		report('Server killed, due to timeout');
@@ -74,7 +82,7 @@ function close () {
 	}, KILL_TIMEOUT);
 
 	server.close(function () {
-		log('Server closed');
+		output('Server closed');
 		clearTimeout(timeout);
 		process.exitCode = 0;
 	});
@@ -105,7 +113,7 @@ KILL_SIGNALS.forEach(function (signal) {
 
 process.once('exit', handleExit);
 
-log(`PID: ${process.pid}`);
+output(`PID: ${process.pid}`);
 
 if (module.hot) {
 	module.hot.accept('__entry__', function () {
@@ -113,7 +121,8 @@ if (module.hot) {
 			server.removeListener('request', currentApp);
 			currentApp = requireKoaApp();
 			server.on('request', currentApp);
-		} catch (err) {
+		}
+		catch (err) {
 			report(err);
 		}
 	});
@@ -123,7 +132,7 @@ if (module.hot) {
 			process.removeListener(signal, close);
 		});
 		process.removeListener('exit', handleExit);
-		log('Server stopped. Restarting...');
+		output('Server stopped. Restarting...');
 		server.close();
 	});
 }
