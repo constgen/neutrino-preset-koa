@@ -12,11 +12,19 @@ process.title = manifest.name;
 module.exports = function (neutrino, settings = {}) {
 	const NODE_MODULES = path.resolve(__dirname, '../node_modules');
 	const LAUNCHER_PATH = path.resolve(__dirname, './launcher.js');
+	const CERT_PATH = path.resolve(__dirname, '../ssl/localhost.pem');
+	let server = (typeof settings.server === 'object') ? settings.server : {};
+
+	// let ssl = (typeof server.ssl === 'object') ? server.ssl : {};
+	let useSSL = (server.ssl === undefined) ? false : Boolean(server.ssl);
 	let devRun = process.env.NODE_ENV === 'development';
-	let useLauncher = (settings.server !== undefined) ? Boolean(settings.server) : true;
-	let port = settings.server && Number(settings.server.port);
-	let defaultPort = devRun ? 0 : 80;
+	let useLauncher = (settings.server === undefined) ? true : Boolean(settings.server);
+	let httpVersion = (server.http === undefined) ? 1 : (parseInt(server.http, 10) || 1);
+	let port = Number(server.port);
+	let defaultProtocolPort = useSSL ? 443 : 80;
+	let defaultPort = devRun ? 0 : defaultProtocolPort;
 	let defaultHost = '';
+	let protocol = (httpVersion > 1 && `http${httpVersion}`) || (useSSL && 'https') || 'http';
 
 	settings.node = settings.node || process.versions.node;
 	settings.server = {
@@ -67,7 +75,10 @@ module.exports = function (neutrino, settings = {}) {
 		.plugin('define-env')
 			.use(DefinePlugin, [{
 				'process.env.PORT': `process.env.PORT || ${settings.server.port}`,
-				'process.env.HOST': `process.env.HOST || '${defaultHost}'`
+				'process.env.HOST': `process.env.HOST || '${defaultHost}'`,
+				'__http__': JSON.stringify(protocol),
+				'__ssl__': JSON.stringify(server.ssl),
+				'__CERT_PATH__': JSON.stringify(CERT_PATH)
 			}])
 			.end();
 };

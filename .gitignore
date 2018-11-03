@@ -58,3 +58,5 @@ typings/
 .env
 
 .vscode
+localhost.pem
+/package-lock.json

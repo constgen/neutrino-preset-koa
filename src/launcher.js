@@ -1,8 +1,9 @@
-let http = require('http');
-
+let http = require(__http__); // eslint-disable-line no-undef
 let chalk = require('chalk');
 
+let sslSettings = require('./ssl-settings');
 let ip = require('./ip');
+let { warn, output, log, report } = require('./print');
 
 function requireKoaApp () {
 	let app = require('__entry__'); // eslint-disable-line import/no-unresolved
@@ -13,31 +14,13 @@ function requireKoaApp () {
 
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
-const DEFAULT_PORT = 80;
+const DEFAULT_PORT = sslSettings ? 443 : 80;
 const KILL_TIMEOUT = 9 * 1000;
 const KILL_SIGNALS = ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'];
-let title = process.title;
 let currentApp = requireKoaApp();
 let sockets = new Set();
-let { stdout, stderr } = process;
 
-function output (message) {
-	stdout.write(`[${title}] ${chalk.blue(message)}\n`);
-}
-
-function warn (message) {
-	stdout.write(`[${title}] ${chalk.yellow(message)}\n`);
-}
-
-function log (message) {
-	stdout.write(`[${title}] ${chalk.blue(message)}\n`);
-}
-
-function report (err) {
-	console.error(`${chalk.red(err.stack)}\n`);
-}
-
-let server = http.createServer(currentApp).listen(
+let server = (sslSettings && http.createSecureServer || http.createServer)(sslSettings, currentApp).listen(
 	{ port: PORT, host: HOST },
 	function (err) {
 		if (err) {
@@ -45,7 +28,7 @@ let server = http.createServer(currentApp).listen(
 		}
 		else {
 			let { port, address } = server.address();
-			let protocol = server.addContext ? 'https' : 'http';
+			let protocol = sslSettings ? 'https' : 'http';
 			let ips = ip.isLocal(address) ? ip.locals : ip.all;
 			let message = ['Server started on:']
 				.concat(ips.map(function (host) {
@@ -96,7 +79,7 @@ function handleExit () {
 
 server.on('connection', handleConnect);
 server.on('secureConnection', handleConnect);
-server.on('request', function (request, response) {
+server.on('request', function handleRequest (request, response) {
 	let socket = request.connection;
 
 	socket.__requestsLength += 1;
