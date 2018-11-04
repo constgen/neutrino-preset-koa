@@ -3,7 +3,9 @@ let chalk = require('chalk');
 
 let sslSettings = require('./ssl-settings');
 let ip = require('./ip');
-let { warn, output, log, report } = require('./print');
+let {
+	warn, output, log, report, blank
+} = require('./print');
 
 function requireKoaApp () {
 	let app = require('__entry__'); // eslint-disable-line import/no-unresolved
@@ -100,6 +102,7 @@ output(`PID: ${process.pid}`);
 
 if (module.hot) {
 	module.hot.accept('__entry__', function () {
+		blank();
 		try {
 			server.removeListener('request', currentApp);
 			currentApp = requireKoaApp();

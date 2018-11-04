@@ -13,13 +13,15 @@
 - Tree-shaking to create smaller bundles
 - Built-in HTTP server for launching an application on development and production
 - Hot Module Replacement with source-watching during development
+- Disabled redundant HMR console messages
 - Change your files without restarting a server
+- Debug console cleared on every file change. Your outdated logs will be removed
 - Chunking of external dependencies apart from application code
-- Automatically discovers free HTTP port to run a server
+- Automatically discovers free HTTP port to run a server locally
 - Graceful server shutdown
 - Logs to `stdout` and `stderr`. No pollution to console
 - Shows PID (Process ID) in output
-- **Only Linux and MacOS:** Sets a NodeJS process name to a project name. So can be easily found with `ps x | grep myname`
+- **Only Linux and MacOS:** Sets a NodeJS process name same as a project name. So can be easily found with `ps x | grep myname`
 - Easily extensible to customize your project as needed
 
 ## Requirements

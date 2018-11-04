@@ -13,10 +13,17 @@ module.exports = {
 	},
 
 	log (message) {
-		stdout.write(`[${title}] ${chalk.blue(message)}\n`);
+		console.log(`[${title}] ${chalk.blue(message)}\n`); // eslint-disable-line no-console
 	},
 
 	report (err) {
 		console.error(`${chalk.red(err.stack)}\n`);
+	},
+	blank () {
+		console.clear(); // eslint-disable-line no-console
 	}
 };
+
+if (module.hot) {
+	require('webpack/hot/log').setLogLevel('none');
+}

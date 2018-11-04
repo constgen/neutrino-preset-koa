@@ -56,13 +56,14 @@ module.exports = function (neutrino, settings = {}) {
 					entry.add(`${require.resolve('webpack/hot/poll')}?1000`);
 				})
 				.end()
-			.when(useLauncher, function (config) {
-				config
-					.resolve.alias
-						.set('__entry__', require.resolve(neutrino.options.mains[key]))
-						.end().end();
-			});
-
+			.resolve.alias
+				.when(useLauncher, function (alias) {
+					alias.set('__entry__', require.resolve(neutrino.options.mains[key]));
+				})
+				.when(useLauncher && devRun, function (alias) {
+					alias
+						.set('webpack/hot/log', require.resolve('webpack/hot/log'));
+				});
 	});
 
 	neutrino.config
