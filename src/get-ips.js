@@ -27,7 +27,7 @@ function getHostName () {
 	}
 }
 
-module.exports = function getIPs () {
+module.exports = function getIps () {
 	let netInterfaces = os.networkInterfaces();
 	let hostname = getHostName();
 	let IPs = Object.keys(netInterfaces)

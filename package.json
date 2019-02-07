@@ -28,8 +28,8 @@
     "@neutrinojs/node": "~8.3.0",
     "@neutrinojs/clean": "~8.3.0",
     "@neutrinojs/banner": "~8.3.0",
-    "source-map-support": "~0.5.9",
-    "chalk": "~2.4.1",
+    "source-map-support": "~0.5.10",
+    "chalk": "~2.4.2",
     "selfsigned": "1.10.4",
     "del": "3.0.0"
   },
@@ -38,9 +38,9 @@
     "koa": "^2.3.0"
   },
   "devDependencies": {
-    "neutrino": "~8.3.0",
-    "webpack": "3.x.x",
-    "@atomspace/eslint": "~2.1.1"
+    "@atomspace/eslint": "~2.4.0",
+    "neutrino": "^8.3.0",
+    "webpack": "3.x.x"
   },
   "files": [
     "src",

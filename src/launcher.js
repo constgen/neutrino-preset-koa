@@ -14,11 +14,11 @@ function requireKoaApp () {
 	return app.callback();
 }
 
-const PORT = process.env.PORT;
-const HOST = process.env.HOST;
 const DEFAULT_PORT = sslSettings ? 443 : 80;
 const KILL_TIMEOUT = 9 * 1000;
 const KILL_SIGNALS = ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'];
+let PORT = process.env.PORT;
+let HOST = process.env.HOST;
 let currentApp = requireKoaApp();
 let sockets = new Set();
 
@@ -63,7 +63,7 @@ function close () {
 
 	let timeout = setTimeout(function () {
 		report('Server killed, due to timeout');
-		process.exit(1);
+		process.exit(1); // eslint-disable-line no-process-exit
 	}, KILL_TIMEOUT);
 
 	server.close(function () {
