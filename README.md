@@ -21,15 +21,14 @@
 - Graceful server shutdown
 - Logs to `stdout` and `stderr`. No pollution to console
 - Shows PID (Process ID) in output
-- **Only Linux and MacOS:** Sets a NodeJS process name same as a project name. So can be easily found with `ps x | grep myname`
+- **Only Linux and MacOS:** Sets the NodeJS process name same as the project name. So can be easily found with `ps x | grep myname`
 - Easily extensible to customize your project as needed
 
 ## Requirements
 
 - Node.js v6.9+
-- npm v3.8.1+
 - Neutrino v8
-- Koa v2
+- Koa v2.3+
 
 ## Installation
 
@@ -99,7 +98,7 @@ Start the app, then either open a browser and navigate to one of the provided ad
 ❯ npm start
 
 √ Build completed
-Server started on:
+[project-name] Server started on:
   http://192.168.31.5:50274
   http://127.0.0.1:50274
   http://MyHome-PC:50274
@@ -145,10 +144,14 @@ Now you can start a built application:
 ```bash
 ❯ node .
 
-Server started on: http://192.168.31.5, http://127.0.0.1, http://MyHome-PC, http://localhost
+[project-name] Server started on:
+  http://192.168.31.5
+  http://127.0.0.1
+  http://MyHome-PC
+  http://localhost
 ```
 
-The server will set a **port** to `80` by default in production mode. The port is defined during a build time.
+The server will set a **port** to `80` by default in production mode. The default port is defined during a build time.
 
 ## Hot Module Replacement
 
@@ -241,22 +244,21 @@ So you don't need to think about how to serve your application. This is the purp
 
 If you want to completely disable the launcher you need to explicitly set the option to `false`
 
-
 ```js
 ['neutrino-preset-koa', {
    server: false
 }]
 ```
 
-This turns your application into a regular Node.js application and disables all advantages of this preset. You will have to call `listen()` on `Koa` instance by yourself if you need to start a server. 
+This turns your application into a regular Node.js application and disables all advantages of this preset. You will have to call `listen()` on `Koa` instance by yourself if you need to start a server.
 
 Disabling the launcher not for debugging purposes is not recommended. Probably you might need [@neutrinojs/node](https://www.npmjs.com/package/@neutrinojs/node) instead in this case.
 
 ### Port
 
-There are multiple ways to customize an HTTP port of your application server.
+There are multiple ways to customize the HTTP port of your application server.
 
-You can configure a **default** port of the server in options using `server.port` property in the [preset options](#preset-options). For example: 
+You can configure a **default** port of the server in options using `server.port` property in the [preset options](#preset-options). For example:
 
 ```js
 ['neutrino-preset-koa', {
@@ -286,6 +288,54 @@ You can force random free port on both production and development by passing one
 
 By default the server start on default IPv6/IPv4 host which exposes it to local network. There is no way to configure a server host from the [preset options](#preset-options). But you still can use `HOST` environment variable to define your custom host.
 
+### HTTP version
+
+This preset uses HTTP v1.x by default. You can switch to HTTP v2 in options.
+
+```js
+['neutrino-preset-koa', {
+   server: {
+      http: 2 // default is 1
+   }
+}]
+```
+
+But there may be no browsers that support not encrypted HTTP2. That's why you need to enable **SSL**.
+
+### SSL
+
+When you want to start browser on `https` you need to provide paths to an SSL certificate and a public key
+
+```js
+['neutrino-preset-koa', {
+   server: {
+      ssl: {
+         cert: path.resolve(__dirname, './ssl/ssl.cert'),
+         key: path.resolve(__dirname, './ssl/ssl.key')
+      }
+   }
+}]
+```
+
+A relative path to the project root also can be used
+
+```js
+{
+   cert: './ssl/ssl.cert',
+   key: './ssl/ssl.key'
+}
+```
+
+If you run in development mode and want to use a temporary locally self-signed certificate you may configure it like this
+
+```js
+['neutrino-preset-koa', {
+   server: {
+      ssl: true
+   }
+}]
+```
+
 ### Node
 
 You can change the minimum Node.js version to be supported by your application. Babel compiler will consider this and output a code with the necessary syntax. You can do this changing `node` property in the [preset options](#preset-options). For example:
@@ -303,7 +353,7 @@ This preset automatically vendors all external dependencies into a separate chun
 
 ## Graceful Shutdown
 
-`neutrino-preset-koa` automatically shutdowns a server instance gracefully. Application server logs this to signal successful closing when exited:
+`neutrino-preset-koa` automatically shutdowns a server instance gracefully. Application server prints this message to signal successful closing when exited:
 
 ```bash
 Server shutting down...
@@ -316,31 +366,33 @@ During shutdown these steps are performed
 2. Close all open inactive connections
 3. Wait current requests to end and close their connections at the end
 
-The preset doesn't forcefully exit a process but waits for queued operations to finish including your async middlwares. In most cases you are **not required** to handle it explicitly. But if you have some long running operations or timers outside middlewares that continues event loop then you should take care of them by yourself. Other will be handled by the preset. The good practice is to use this in your code in such cases:
+The preset doesn't forcefully exit a process but waits for queued operations to finish including your async middlwares. In most cases you are **not required** to handle it explicitly. But if you have some long running operations or timers outside middlewares that continues event loop then you should take care of them by yourself. Other will be handled by `neutrino-preset-koa`. The good practice is to use this in your code in cases of shutdown:
 
 ```js
 ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'].forEach(function (signal) {
     process.once(signal, function(){
-    // abort all async operations
-    // cancel all timers
-    process.exitCode = 0;
-  })
-})
+      // abort all async operations
+      // ...
+      // cancel all timers
+      // ...
+      process.exitCode = 0;
+    });
+});
 ```
 
-Don't call `process.exit()` as it considered a bad practice. An application should exit naturally when there is an empty call stack and no more scheduled tasks. You should see this at the very end if a finishing of an application is correct:
+Don't call `process.exit()` as it considered a bad practice. The application should exit naturally when there is an empty call stack and no more scheduled tasks. You should see this at the very end if the finishing of the application is correct:
 
 ```bash
 Application exited
 ```
 
-In case your application will not finish for some reason in 9 seconds, there is a timeout that kills the application forcefully. You will not be able to handle this termination. An application will exit with an error signal right after this message
+In case your application will not finish for some reason in 9 seconds, there is a timeout that kills the application forcefully. You will not be able to handle this termination. The application will exit with an error signal right after this message
 
 ```bash
 Server killed, due to timeout
 ```
 
-Graceful Shutdown works correctly only in a built version which is started using 
+Graceful Shutdown works correctly only in a built version which is started using
 
 ```bash
 node .
@@ -351,4 +403,3 @@ This is another reason to use this command on a production environment. It can't
 [npm-image]: https://img.shields.io/npm/v/neutrino-preset-koa.svg
 [npm-downloads]: https://img.shields.io/npm/dt/neutrino-preset-koa.svg
 [npm-url]: https://npmjs.org/package/neutrino-preset-koa
-

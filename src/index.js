@@ -67,6 +67,7 @@ module.exports = function (neutrino, settings = {}) {
 	});
 
 	neutrino.config
+		.devtool('source-map')
 		.resolve.modules
 			.add(NODE_MODULES)
 			.end().end()

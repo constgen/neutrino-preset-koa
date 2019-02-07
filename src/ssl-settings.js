@@ -117,7 +117,6 @@ function getSettings () {
 		pfx: ssl.pfx,
 		passphrase: ssl.passphrase,
 		requestCert: Boolean(ssl.requestCert),
-		rejectUnauthorized: Boolean(ssl.rejectUnauthorized),
 		allowHTTP1: true
 	};
 }
