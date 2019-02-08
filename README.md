@@ -400,6 +400,34 @@ node .
 
 This is another reason to use this command on a production environment. It can't work properly when you start the server as a child process of `npm start`.
 
+## Launching in the VSCode Debugger
+
+Visual Studio Code has its own built-in debugger. You may launch your application in the development mode using this debugger. Use this configuration:
+
+**launch.json**
+
+```json
+{
+   "version": "0.2.0",
+   "configurations": [
+      {
+         "name": "Debug",
+         "type": "node",
+         "request": "launch",
+         "program": "${workspaceRoot}/node_modules/neutrino/bin/neutrino.js",
+         "args": [
+            "start",
+            "--debug"
+         ],
+         "autoAttachChildProcesses": true,
+         "internalConsoleOptions": "openOnSessionStart"
+      }
+   ]
+}
+```
+
+Your application will start and you will be able to use breakpoints in the editor. Sometime breakpoints work only in route handlers.
+
 [npm-image]: https://img.shields.io/npm/v/neutrino-preset-koa.svg
 [npm-downloads]: https://img.shields.io/npm/dt/neutrino-preset-koa.svg
 [npm-url]: https://npmjs.org/package/neutrino-preset-koa
