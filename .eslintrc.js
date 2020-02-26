@@ -1,5 +1,3 @@
-const { Neutrino } = require('neutrino');
- 
-module.exports = Neutrino({ cwd: __dirname })
-  .use('.neutrinorc.js')
-  .call('eslintrc');
+let neutrino = require('neutrino')
+
+module.exports = neutrino().eslintrc()

@@ -1,58 +1,92 @@
 # Neutrino Koa Preset
 
-[Neutrino](https://neutrinojs.org/) preset for building Koa Node.js applications.
+`neutrino-preset-koa` is a [Neutrino](https://neutrino.js.org) preset for [Koa](https://koajs.com/) applications development.
 
 [![NPM version][npm-image]](npm-url)
 [![NPM downloads][npm-downloads]](npm-url)
+[![Build Status][build-status]][travis-url]
+
+## What is Neutrino?
+
+[Neutrino](https://neutrino.js.org) is a configuration engine that allows to bundle Webpack configurations or their parts as modules and publish them to NPM. Such modules usually are called presets or middlewares. They are designed to work in conjunction with Neutrino core in your project. You can compose compilation, linting, testing and other configurations, and share them to developers.
 
 ## Features
 
 - Zero upfront configuration necessary to start developing and building a Koa project
-- Modern Babel compilation supporting ES modules, async functions, and dynamic imports
+- Modern Babel compilation supporting ES modules, async functions, dynamic imports, ES class properties, rest spread operators, decorators and automatic polyfills bound to the platform
 - Sourcemaps
 - Tree-shaking to create smaller bundles
-- Built-in HTTP server for launching an application on development and production
+- Built-in HTTP server for launching the application on development and production
 - Hot Module Replacement with source-watching during development
-- Disabled redundant HMR console messages
-- Change your files without restarting a server
+- Disabled redundant `[HMR]` console messages
+- You can change your files without restarting the server
+- TypeScript support
+- User-friendly building progress bar
+- Detect and warn about circular dependencies during build time
+- Git revision information through environment variables (VERSION, COMMITHASH, BRANCH)
+- Consider external dependencies sourcemaps for better debugging during development
 - Debug console cleared on every file change. Your outdated logs will be removed
 - Chunking of external dependencies apart from application code
 - Automatically discovers free HTTP port to run a server locally
 - Graceful server shutdown
-- Logs to `stdout` and `stderr`. No pollution to console
-- Shows PID (Process ID) in output
-- **Only Linux and MacOS:** Sets the NodeJS process name same as the project name. So can be easily found with `ps x | grep myname`
-- Easily extensible to customize your project as needed
+- Outputs building log to `stdout` and `stderr`. No pollution to the console
+- Shows PID (Process ID) in the output
+- **Only Linux and MacOS:** Sets the NodeJS process name the same as the project name. So can be easily found with `ps x | grep myname`
+- Production-optimized bundles with minification
 
 ## Requirements
 
-- Node.js v6.9+
-- Neutrino v8
+- Node.js v10+
+- Neutrino v9
 - Koa v2.3+
 
 ## Installation
 
-`neutrino-preset-koa` can be installed with NPM. Inside your project, make sure `neutrino` and `neutrino-preset-koa` are development dependencies.
+`neutrino-preset-koa` can be installed with NPM. Inside your project, make sure `neutrino`, `webpack` and `neutrino-preset-koa` are development dependencies.
 
 ```bash
-❯ npm install --save-dev neutrino neutrino-preset-koa
-❯ npm install --save koa
+npm install --save koa
+npm install --save-dev neutrino neutrino-preset-koa webpack webpack-cli
+```
+
+Now edit your project's `package.json` to add commands for starting and building the application:
+
+```json
+{
+  "scripts": {
+    "build": "webpack --mode production",
+    "start": "webpack --mode development"
+  }
+}
+```
+
+Then add the new file `.neutrinorc.js` in the root of the project:
+
+```js
+let koa = require('neutrino-preset-koa')
+
+module.exports = {
+   use: [
+      koa()
+   ]
+}
+```
+
+And create a `webpack.config.js` file in the root of the project, that uses the Neutrino API to access the generated webpack config:
+
+```js
+let neutrino = require('neutrino')
+
+module.exports = neutrino().webpack()
 ```
 
 ## Project Layout
 
-`neutrino-preset-koa` follows the standard [project layout](https://neutrino.js.org/project-layout) specified by Neutrino. This
-means that by default all project source code should live in a directory named `src` in the root of the
-project. This includes JavaScript files that would be available to your compiled project.
+`neutrino-preset-koa` follows the standard [project layout](https://neutrino.js.org/project-layout) specified by Neutrino. This means that by default all project source code should live in a directory named `src` in the root of the project. This includes JavaScript and TypeScript files that would be available to your compiled project.
 
 ## Quickstart
 
-After installing Neutrino and the Koa preset, add a new directory named `src` in the root of the project, with
-a single JS file named `index.js` in it.
-
-```bash
-❯ mkdir src && touch src/index.js
-```
+After installing Neutrino and the Koa preset, add a new directory named `src` in the root of the project, with a single JS file named `index.js` in it.
 
 Edit your `src/index.js` file with the following:
 
@@ -63,34 +97,16 @@ module.exports = new Koa()
    .use(function ({ request, response }) {
       response.body = {
          success: true
-      };
+      }
    })
    .on('error', function (err, ctx) {
-      console.error(err, ctx);
+      console.error(err, ctx)
    })
-   // don't call .listen()
+
+// don't call .listen()
 ```
 
 **Important:** This preset requires your entry point to export an instance of Koa application. But you don't need to start it by calling `listen()` method. The preset has a built-in launch server that will do it internally. You can only [customize](#customizing) the server in the preset options.
-
-Now edit your project's 'package.json' to add commands for starting and building the application.
-
-```json
-{
-  "scripts": {
-    "start": "neutrino start --use neutrino-preset-koa",
-    "build": "neutrino build --use neutrino-preset-koa"
-  }
-}
-```
-
-If you are using `.neutrinorc.js`, add this preset to your use array instead of `--use` flags:
-
-```js
-module.exports = {
-  use: ['neutrino-preset-koa']
-}
-```
 
 Start the app, then either open a browser and navigate to one of the provided addresses or use curl from another terminal window:
 
@@ -114,8 +130,7 @@ The server will automatically choose a free **port** by default in a development
 
 ## Building
 
-`neutrino-preset-koa` builds assets to the `build` directory by default when running `neutrino build`. Using the
-quick start example above as a reference:
+`neutrino-preset-koa` builds assets to the `build` directory by default when running `npm run build`. Using the quick start example above as a reference:
 
 ```bash
 ❯ npm run build
@@ -129,8 +144,7 @@ Time: 424ms
 index.js.map  3.73 kB       0  [emitted]  index
 ```
 
-You can either serve or deploy the contents of this `build` directory as a Node.js server. For Node.js
-this usually means adding a `main` property to 'package.json' pointing to the primary main built entry point. Also it is recommended to add a private flag to not accidentally publish your server.
+You can either serve or deploy the contents of this `build` directory as a Node.js server. For Node.js this usually means adding a `main` property to 'package.json' pointing to the primary main built entry point. Also it is recommended to add a private flag to not accidentally publish your server.
 
 ```json
 {
@@ -161,93 +175,67 @@ Using dynamic imports with `import()` will automatically create split points and
 
 ## Debugging
 
-You can start the Node.js server in `inspect` mode to debug the process by setting `neutrino.options.debug` to `true`.
-This can be done from the [API](https://neutrino.js.org/api#optionsdebug) or the [CLI using `--debug`](https://neutrino.js.org/cli#-debug), e.g:
-
-```bash
-neutrino start --debug
-```
+You can start the Node.js server in `inspect` mode to debug the process by setting `neutrino.options.debug` to `true`. This can be done from the [API](https://neutrino.js.org/api#optionsdebug)
 
 ## Preset options
 
-You can provide custom options and have them merged with this preset's default options to easily affect how this preset builds. You can modify Koa preset settings from `.neutrinorc.js` by overriding with an options object. Use an array pair instead of a string to supply these options in `.neutrinorc.js`.
+You can provide custom options and have them merged with this preset's default options to easily affect how this preset builds. You can modify Koa preset settings from `.neutrinorc.js` by overriding with an options object.
 
 The following shows how you can pass an options object to the Koa preset and override its options, showing the defaults:
 
+#### .neutrinorc.js
+
 ```js
+let koa = require('neutrino-preset-koa')
+
 module.exports = {
    use: [
-      ['neutrino-preset-koa', {
+      koa({
          // target specific version via babel-preset-env
-         node: process.versions.node
+         node: process.versions.node,
+
          // customize launcher
          server: {
             // Set default port
-            port: undefined
-         }
-      }]
+            port: undefined,
+
+            // Set HTTP version
+            http: 1,
+
+            // Set SSL certificates
+            ssl: undefined
+         },
+
+         // Enable source maps in the production build. Development sourcemaps are not affected and always turned on
+         sourcemaps: false,
+
+         // Add all necessary polyfills required to support NodeJS version depending on the usage in the code
+         polyfills: true
+      })
    ]
-};
+}
 ```
 
 ## Customizing
-
-By default Neutrino, and therefore this preset, creates a single **main** `index` entry point to your application, and this maps to the `index.*` file in the `src` directory. This preset has a limitation – it supports only a single entry point. Defining 2 or more may cause it to work not properly. Code not imported in the hierarchy of the entry will not be output to the bundle.
-
-You can customize a single entry point in your `.neutrinorc.js` and override a default one
-
-```js
-module.exports = {
-   options: {
-      mains: {
-         server: './server.js'
-      }
-   },
-   use: ['neutrino-preset-koa']
-};
-```
-
-To overcome the limitation you can define multiple configurations
-
-```js
-module.exports = [
-   {
-      options: {
-         mains: {
-            index: './server1.js'
-         }
-      },
-      use: ['neutrino-preset-koa']
-   },
-   {
-      options: {
-         mains: {
-            index: './server2.js'
-         }
-      },
-      use: ['neutrino-preset-koa']
-   }
-];
-```
 
 ### Launcher
 
 This preset wraps your application with HTTP server that launches your application. It can be configured using `server` property in the [preset options](#preset-options)
 
 ```js
-['neutrino-preset-koa', {
+koa({
    server: { }
-}]
+})
 ```
 
-So you don't need to think about how to serve your application. This is the purpose of the `neutrino-preset-koa` preset.
+So you don't need to think about how to serve your application. This is completely managed by `neutrino-preset-koa` preset.
 
-If you want to completely disable the launcher you need to explicitly set the option to `false`
+If you want to **disable** the launcher you need to explicitly set the option to `false`
 
 ```js
-['neutrino-preset-koa', {
+koa({
    server: false
-}]
+})
 ```
 
 This turns your application into a regular Node.js application and disables all advantages of this preset. You will have to call `listen()` on `Koa` instance by yourself if you need to start a server.
@@ -261,65 +249,65 @@ There are multiple ways to customize the HTTP port of your application server.
 You can configure a **default** port of the server in options using `server.port` property in the [preset options](#preset-options). For example:
 
 ```js
-['neutrino-preset-koa', {
+koa({
    server: {
       port: 8080
    }
-}]
+})
 ```
 
 Now your server will start on `8080` in both production and development modes. But this port is considered **default** and may be overridden any time by `PORT` environment variable. This may be useful for production environments as the server will check `process.env.PORT` in the runtime first and then fallback to a port you have defined.
 
 The default behavior of port when not configured is to default to `80` on production and to take random free default port on development.
 
-You can force random free port on both production and development by passing one of these values: `false`, `null`, `0`. For example:
+You can choose random free port on both production and development by passing one of these values: `false`, `null`, `0`. For example:
 
 ```js
-['neutrino-preset-koa', {
+koa({
    server: {
       port: 0
    }
-}]
+})
 ```
 
 `PORT` environment variable will always have a priority over any configuration.
 
 ### Host
 
-By default the server start on default IPv6/IPv4 host which exposes it to local network. There is no way to configure a server host from the [preset options](#preset-options). But you still can use `HOST` environment variable to define your custom host.
+By default the server starts on a default IPv6/IPv4 host which exposes it to local network. There is no way to configure a server host from the [preset options](#preset-options). But you still can use `HOST` environment variable to define your custom host.
 
 ### HTTP version
 
 This preset uses HTTP v1.x by default. You can switch to HTTP v2 in options.
 
 ```js
-['neutrino-preset-koa', {
+koa({
    server: {
       http: 2 // default is 1
    }
-}]
+})
 ```
 
 But there may be no browsers that support not encrypted HTTP2. That's why you need to enable **SSL**.
 
 ### SSL
 
-When you want to start browser on `https` you need to provide paths to an SSL certificate and a public key
+When you want to start a browser on `https` you need to provide paths to an SSL certificate and a public key
 
 ```js
-['neutrino-preset-koa', {
+koa({
    server: {
       ssl: {
          cert: path.resolve(__dirname, './ssl/ssl.cert'),
          key: path.resolve(__dirname, './ssl/ssl.key')
       }
    }
-}]
+})
 ```
 
 A relative path to the project root also can be used
 
-```js
+```json
 {
    cert: './ssl/ssl.cert',
    key: './ssl/ssl.key'
@@ -329,11 +317,11 @@ A relative path to the project root also can be used
 If you run in development mode and want to use a temporary locally self-signed certificate you may configure it like this
 
 ```js
-['neutrino-preset-koa', {
+koa({
    server: {
       ssl: true
    }
-}]
+})
 ```
 
 ### Node
@@ -341,15 +329,56 @@ If you run in development mode and want to use a temporary locally self-signed c
 You can change the minimum Node.js version to be supported by your application. Babel compiler will consider this and output a code with the necessary syntax. You can do this changing `node` property in the [preset options](#preset-options). For example:
 
 ```js
-['neutrino-preset-koa', {
+koa({
    node: '6.9.0'
-}]
+})
 ```
 
-### Vendoring
+### Entry point
 
-This preset automatically vendors all external dependencies into a separate chunk based on their inclusion in your
-'package.json'. No extra work is required to make this work.
+By default Neutrino, and therefore this preset, creates a single **main** `index` entry point to your application, and this maps to the `index.*` file in the `src` directory.
+
+> **Important! This preset has a limitation – it supports only a single entry point. Defining 2 or more may cause it to work not properly.**
+
+You can customize a single entry point in your `.neutrinorc.js` and override a default one
+
+**.neutrinorc.js**
+
+```js
+module.exports = {
+   options: {
+      mains: {
+         server: './server.js'
+      }
+   },
+   use: [koa()]
+}
+```
+
+To overcome the limitation you can define multiple configurations
+
+**.neutrinorc.js**
+
+```js
+module.exports = [
+   {
+      options: {
+         mains: {
+            index: './server1.js'
+         }
+      },
+      use: [koa()]
+   },
+   {
+      options: {
+         mains: {
+            index: './server2.js'
+         }
+      },
+      use: [koa()]
+   }
+]
+```
 
 ## Graceful Shutdown
 
@@ -366,18 +395,18 @@ During shutdown these steps are performed
 2. Close all open inactive connections
 3. Wait current requests to end and close their connections at the end
 
-The preset doesn't forcefully exit a process but waits for queued operations to finish including your async middlwares. In most cases you are **not required** to handle it explicitly. But if you have some long running operations or timers outside middlewares that continues event loop then you should take care of them by yourself. Other will be handled by `neutrino-preset-koa`. The good practice is to use this in your code in cases of shutdown:
+The preset doesn't forcefully exit a process but waits for queued operations to finish including your async Koa middlewares. In most cases you are **not required** to handle it explicitly. But if you have some long running operations or timers outside Koa middlewares that continue event loop then you should take care of them by yourself. Other will be handled by `neutrino-preset-koa`. The good practice is to use this in your code in cases of shutdown:
 
 ```js
 ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'].forEach(function (signal) {
-    process.once(signal, function(){
+   process.once(signal, function () {
       // abort all async operations
       // ...
       // cancel all timers
       // ...
-      process.exitCode = 0;
-    });
-});
+      process.exitCode = 0
+   })
+})
 ```
 
 Don't call `process.exit()` as it considered a bad practice. The application should exit naturally when there is an empty call stack and no more scheduled tasks. You should see this at the very end if the finishing of the application is correct:
@@ -400,34 +429,82 @@ node .
 
 This is another reason to use this command on a production environment. It can't work properly when you start the server as a child process of `npm start`.
 
-## Launching in the VSCode Debugger
+## VSCode tips
+
+### Project settings
+
+These are suggested workspace settings for VSCode editor:
+
+#### .vscode/settings.json
+
+```json
+{
+   "files.autoSave": "onFocusChange"
+}
+```
+
+This should prevent building as you type code.
+
+### Launching in the VSCode Debugger
 
 Visual Studio Code has its own built-in debugger. You may launch your application in the development mode using this debugger. Use this configuration:
 
-**launch.json**
+#### launch.json
 
 ```json
 {
    "version": "0.2.0",
    "configurations": [
       {
-         "name": "Debug",
+         "name": "Start",
          "type": "node",
          "request": "launch",
-         "program": "${workspaceRoot}/node_modules/neutrino/bin/neutrino.js",
-         "args": [
-            "start",
-            "--debug"
-         ],
+         "program": "${workspaceFolder}/node_modules/webpack/bin/webpack.js",
+         "args": ["--mode", "development"],
          "autoAttachChildProcesses": true,
-         "internalConsoleOptions": "openOnSessionStart"
+         "internalConsoleOptions": "openOnSessionStart",
+         "console": "integratedTerminal",
+         "sourceMaps": true,
+         "runtimeArgs": ["--inspect"],
+         "skipFiles": ["${workspaceFolder}/node_modules/**", "<node_internals>/**"],
+         "env": {
+            "PORT": "0"
+         }
+      },
+      {
+         "name": "Run",
+         "type": "node",
+         "request": "launch",
+         "program": "${workspaceFolder}/build/index",
+         "autoAttachChildProcesses": true,
+         "sourceMaps": true,
+         "skipFiles": ["${workspaceFolder}/node_modules/**", "<node_internals>/**"],
+         "env": {
+            "PORT": "80"
+         }
+      },
+      {
+         "name": "Debug",
+         "type": "node",
+         "request": "attach",
+         "port": 9229,
+         "sourceMaps": true,
+         "skipFiles": ["${workspaceFolder}/node_modules/**", "<node_internals>/**"]
       }
    ]
 }
 ```
 
-Your application will start and you will be able to use breakpoints in the editor. Sometime breakpoints work only in route handlers.
+Use these 3 tasks for different purposes
+
+- **Start** instead of `npm start`. Builds with live reloading. You can override the Neutrino settings port with `"env": {"PORT": "0"}`
+- **Run** instead of `node .`. Runs what was built. Useful for testing of the production build. You can override the Neutrino settings port with `"env": {"PORT": "80"}`
+- **Debug** when want to attach to a manually opened app, e.g. `node --inspect .`.
+
+You will be able to use breakpoints in the editor. Sometime breakpoints outside routes don't work during Hot Module Replacement. You may restart the application in such cases.
 
 [npm-image]: https://img.shields.io/npm/v/neutrino-preset-koa.svg
 [npm-downloads]: https://img.shields.io/npm/dt/neutrino-preset-koa.svg
 [npm-url]: https://npmjs.org/package/neutrino-preset-koa
+[build-status]: https://travis-ci.com/constgen/neutrino-preset-koa.svg?branch=master
+[travis-url]: https://travis-ci.com/constgen/neutrino-preset-koa

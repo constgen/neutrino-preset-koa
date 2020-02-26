@@ -1,25 +1,25 @@
-let fs = require('fs');
+let fs = require('fs')
 
-let del = require('del');
-let selfsigned = require('selfsigned');
+let del = require('del')
+let selfsigned = require('selfsigned')
 
-let { warn, output } = require('./print');
+let { warn, output } = require('./print')
 
-const NAME_TYPE = {
+const NAME_TYPE = Object.freeze({
 	DNS: 2,
 	IP: 7
-};
-const VALID_DAYS = 365;
-const VALID_MILISECONDS = 1000 * 60 * 60 * 24 * VALID_DAYS;
-const CERT_PATH = __CERT_PATH__; // eslint-disable-line no-undef
-let settings = __ssl__; // eslint-disable-line no-undef
-let useSSL = (settings === undefined) ? false : Boolean(settings);
-let ssl = (typeof settings === 'object') ? settings : {};
+})
+const VALID_DAYS = 365
+const VALID_MILISECONDS = 1000 * 60 * 60 * 24 * VALID_DAYS
+const CERT_PATH = __CERT_PATH__ // eslint-disable-line no-undef
+let settings = __ssl__ // eslint-disable-line no-undef
+let useSSL = Boolean(settings)
+let ssl = (typeof settings === 'object') ? settings : {}
 
 function create () {
-	let attrs = [{ name: 'commonName', value: 'host.local' }];
+	let attrs = [{ name: 'commonName', value: 'host.local' }]
 
-	output('Generating local SSL Certificate');
+	output('Generating local SSL Certificate')
 	return selfsigned.generate(attrs, {
 		algorithm: 'sha256',
 		days: VALID_DAYS,
@@ -71,44 +71,44 @@ function create () {
 				]
 			}
 		]
-	});
+	})
 }
 
 function getSettings () {
-	let certificate;
+	let certificate
 
 	if (!ssl.key || !ssl.cert) {
-		let certificateExists = fs.existsSync(CERT_PATH);
+		let certificateExists = fs.existsSync(CERT_PATH)
 
 		if (certificateExists) {
-			let certificateStats = fs.statSync(CERT_PATH);
+			let certificateStats = fs.statSync(CERT_PATH)
 
-			let timestamp = new Date().getTime();
-			let certificateExpired = (timestamp - certificateStats.ctime) / VALID_MILISECONDS > 1;
+			let timestamp = new Date().getTime()
+			let certificateExpired = (timestamp - certificateStats.ctime) / VALID_MILISECONDS > 1
 
 			if (certificateExpired) {
-				del.sync([CERT_PATH], { force: true });
-				warn('Removed expired SSL Certificate');
-				certificateExists = false;
+				del.sync([CERT_PATH], { force: true })
+				warn('Removed expired SSL Certificate')
+				certificateExists = false
 			}
 		}
 
 		if (!certificateExists) {
-			let pems = create();
+			let pems = create()
 
 			fs.writeFileSync(
 				CERT_PATH,
 				`${pems.private}\n${pems.cert}`,
 				{ encoding: 'utf-8' }
-			);
-			output('Certificate created');
+			)
+			output('Certificate created')
 		}
 
-		output('Temporary Certificate used');
-		certificate = fs.readFileSync(CERT_PATH, { encoding: 'utf-8' });
+		output('Temporary Certificate used')
+		certificate = fs.readFileSync(CERT_PATH, { encoding: 'utf-8' })
 	}
 	else {
-		output('Custom Certificate used');
+		output('Custom Certificate used')
 	}
 	return {
 		key: ssl.key && fs.readFileSync(ssl.key) || certificate,
@@ -118,7 +118,7 @@ function getSettings () {
 		passphrase: ssl.passphrase,
 		requestCert: Boolean(ssl.requestCert),
 		allowHTTP1: true
-	};
+	}
 }
 
-module.exports = useSSL ? getSettings() : undefined;
+module.exports = useSSL ? getSettings() : undefined

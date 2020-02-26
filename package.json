@@ -1,10 +1,12 @@
 {
   "name": "neutrino-preset-koa",
   "version": "2.0.0",
-  "description": "Neutrino preset for Koa Node.js projects",
+  "description": "Neutrino preset for building Koa applications",
   "main": "src/index.js",
   "scripts": {
-    "pretest": "neutrino lint"
+    "eslint": "eslint ./ --ext .js,.jsx,.html,.md --max-warnings 0",
+    "pretest": "npm run eslint",
+    "lint": "npm run eslint -- --fix"
   },
   "repository": {
     "type": "git",
@@ -25,22 +27,42 @@
   },
   "homepage": "https://github.com/constgen/neutrino-preset-koa#readme",
   "dependencies": {
-    "@neutrinojs/node": "~8.3.0",
-    "@neutrinojs/clean": "~8.3.0",
-    "@neutrinojs/banner": "~8.3.0",
-    "source-map-support": "~0.5.10",
-    "chalk": "~2.4.2",
-    "selfsigned": "1.10.4",
-    "del": "3.0.0"
+    "@neutrinojs/node": "~9.1.0",
+    "@neutrinojs/clean": "~9.1.0",
+    "@neutrinojs/banner": "~9.1.0",
+    "@neutrinojs/compile-loader": "9.1.0",
+    "source-map-support": "^0.5.16",
+    "chalk": "~3.0.0",
+    "selfsigned": "1.10.7",
+    "del": "5.1.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-typescript": "^7.8.3",
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "babel-plugin-smart-webpack-import": "1.6.0",
+    "babel-loader": "^8.0.6",
+    "native-addon-loader": "^2.0.1",
+    "typescript": "^3.7.4",
+    "babel-merge": "^3.0.0",
+    "deepmerge": "^1.5.2",
+    "circular-dependency-plugin": "5.2.0",
+    "smart-source-map-loader": "1.1.0",
+    "git-revision-webpack-plugin": "3.0.4",
+    "env-ci": "5.0.1",
+    "webpackbar": "4.0.0",
+    "core-js": "3.6.4"
   },
   "peerDependencies": {
-    "webpack": "*",
+    "neutrino": "^9.0.0",
+    "webpack": "^4.0.0",
     "koa": "^2.3.0"
   },
   "devDependencies": {
-    "@atomspace/eslint": "~2.4.0",
-    "neutrino": "^8.3.0",
-    "webpack": "3.x.x"
+    "neutrino": "^9.1.0",
+    "webpack": "^4.0.0",
+    "eslint": "6.8.0",
+    "@constgen/eslint": "1.0.0"
   },
   "files": [
     "src",
@@ -49,6 +71,7 @@
     "README.md"
   ],
   "engines": {
-    "npm": ">=3.8.1"
+    "node": ">=10",
+    "npm": ">=5.4.0"
   }
 }

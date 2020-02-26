@@ -1,10 +1,11 @@
+let constgenEslint = require('@constgen/eslint')
+
 module.exports = {
-	use: [
-		['@atomspace/eslint', {
-			eslint: {
-				envs: ['node'],
-				rules: {}
-			}
-		}]
-	]
+   use: [
+      constgenEslint({
+         eslint: {
+				env: { node: true }
+         }
+      })
+   ]
 }
