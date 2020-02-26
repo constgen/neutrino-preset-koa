@@ -4,8 +4,8 @@
   "description": "Neutrino preset for building Koa applications",
   "main": "src/index.js",
   "scripts": {
-    "eslint": "eslint ./ --ext .js,.jsx,.html,.md --max-warnings 0",
-    "pretest": "npm run eslint",
+    "eslint": "eslint ./ --ext .js,.jsx,.html,.md",
+    "pretest": "npm run eslint -- --max-warnings 0",
     "lint": "npm run eslint -- --fix"
   },
   "repository": {
