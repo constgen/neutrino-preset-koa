@@ -380,6 +380,56 @@ module.exports = [
 ]
 ```
 
+## Webpack config
+
+Sometime you want to extend Webpack configuration with custom loaders or plugins. This can be done in `.neutrinorc.js` file using [Neutrino API](https://neutrinojs.org/webpack-chain/) also known as [`webpack-chain`](https://www.npmjs.com/package/webpack-chain).
+
+### Plugins
+
+For example, you can add [TypeScript checking](https://www.npmjs.com/package/fork-ts-checker-webpack-plugin)
+
+```js
+let koa = require('neutrino-preset-koa')
+let TsChecker = require('fork-ts-checker-webpack-plugin')
+
+module.exports = {
+   use: [
+      koa(),
+      function (neutrino) {
+         let prodMode = (process.env.NODE_ENV === 'production')
+
+         if (prodMode) return
+
+         neutrino.config
+            .plugin('ts-checker')
+               .use(TsChecker, [{
+                  // options
+               }])
+               .end()
+      }
+   ]
+}
+```
+
+Specifically for this plugin you also need to create `tsconfig.json` file
+
+```json
+{
+   "compilerOptions": {
+      "target": "es2016",
+      "module": "commonjs",
+      "strict": true,
+      "alwaysStrict": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true
+   },
+   "include": ["src/**/*"],
+   "exclude": ["node_modules"]
+}
+```
+
+It will enable highlighting in your code editor too.
+
 ## Graceful Shutdown
 
 `neutrino-preset-koa` automatically shutdowns a server instance gracefully. Application server prints this message to signal successful closing when exited:
