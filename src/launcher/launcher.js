@@ -14,16 +14,16 @@ function requireKoaApp () {
 	return app.callback()
 }
 
-const DEFAULT_PORT = sslSettings ? 443 : 80
-const KILL_TIMEOUT = 9 * 1000
-const KILL_SIGNALS = Object.freeze(['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'])
-let PORT = process.env.PORT
-let HOST = process.env.HOST
+const KILL_TIMEOUT = 10000
+const killSignals = Object.freeze(['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'])
+const HTTP_PORT = 80
+const HTTPS_PORT = 443
+let defaultPort = sslSettings ? HTTPS_PORT : HTTP_PORT
 let currentApp = requireKoaApp()
 let sockets = new Set()
 
 let server = ((sslSettings && http.createSecureServer) || http.createServer)(sslSettings, currentApp).listen(
-	{ port: PORT, host: HOST },
+	{ port: process.env.PORT, host: process.env.HOST },
 	function (err) {
 		if (err) {
 			throw err
@@ -34,7 +34,7 @@ let server = ((sslSettings && http.createSecureServer) || http.createServer)(ssl
 			let ips = ip.isLocal(address) ? ip.locals : ip.all
 			let message = ['Server started on:']
 				.concat(ips.map(function (host) {
-					return chalk.green(`${protocol}://${host}${port === DEFAULT_PORT ? '' : `:${port}`}`)
+					return chalk.green(`${protocol}://${host}${port === defaultPort ? '' : `:${port}`}`)
 				})).join('\n  ')
 
 			log(message)
@@ -90,14 +90,10 @@ server.on('request', function handleRequest (request, response) {
 		if (!server.listening) disconnect(socket)
 	})
 })
-
-
-KILL_SIGNALS.forEach(function (signal) {
+killSignals.forEach(function (signal) {
 	process.once(signal, close)
 })
-
 process.once('exit', handleExit)
-
 output(`PID: ${process.pid}`)
 
 if (module.hot) {
@@ -114,7 +110,7 @@ if (module.hot) {
 	})
 	module.hot.accept()
 	module.hot.dispose(function () {
-		KILL_SIGNALS.forEach(function (signal) {
+		killSignals.forEach(function (signal) {
 			process.removeListener(signal, close)
 		})
 		process.removeListener('exit', handleExit)

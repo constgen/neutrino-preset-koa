@@ -465,7 +465,7 @@ Don't call `process.exit()` as it considered a bad practice. The application sho
 Application exited
 ```
 
-In case your application will not finish for some reason in 9 seconds, there is a timeout that kills the application forcefully. You will not be able to handle this termination. The application will exit with an error signal right after this message
+In case your application will not finish for some reason in 10 seconds, there is a timeout that kills the application forcefully. You will not be able to handle this termination. The application will exit with an error signal right after this message
 
 ```bash
 Server killed, due to timeout
