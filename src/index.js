@@ -25,7 +25,8 @@ module.exports = function (customSettings = {}) {
 			sourcemaps: false,
 			polyfills : true,
 			server    : defaultServerSettings,
-			node      : process.versions.node
+			node      : process.versions.node,
+			clean     : true
 		}
 
 		let settings    = deepmerge(defaultSettings, customSettings)
@@ -49,7 +50,7 @@ module.exports = function (customSettings = {}) {
 		}))
 		neutrino.use(nodeLoader())
 		neutrino.use(dependency())
-		neutrino.use(progress())
+		neutrino.use(progress({ clean: settings.clean }))
 		neutrino.use(sourcemap({ prod: settings.sourcemaps }))
 		neutrino.use(revision())
 		neutrino.use(optimization({ chunks: false }))

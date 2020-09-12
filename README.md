@@ -211,7 +211,10 @@ module.exports = {
          sourcemaps: false,
 
          // Add all necessary polyfills required to support NodeJS version depending on the usage in the code
-         polyfills: true
+         polyfills: true,
+
+         // Clear console on every build
+         clean: true
       })
    ]
 }
