@@ -16,7 +16,8 @@
       "editor.insertSpaces": true
    },
    "eslint.options": {
-      "extensions": [".js", ".jsx", ".html", ".md"]
+		"extensions": [".js", ".jsx", ".html", ".md"],
+		"resolvePluginsRelativeTo": "./node_modules/.pnpm"
    },
    "eslint.validate": ["javascript", "javascriptreact", "html", "markdown"]
 }

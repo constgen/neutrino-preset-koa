@@ -4,7 +4,7 @@
   "description": "Neutrino preset for building Koa applications",
   "main": "src/index.js",
   "scripts": {
-    "eslint": "eslint ./ --ext .js,.jsx,.html,.md",
+    "eslint": "eslint ./",
     "pretest": "npm run eslint -- --max-warnings 0",
     "lint": "npm run eslint -- --fix"
   },
@@ -27,42 +27,29 @@
   },
   "homepage": "https://github.com/constgen/neutrino-preset-koa#readme",
   "dependencies": {
-    "@neutrinojs/node": "~9.1.0",
-    "@neutrinojs/clean": "~9.1.0",
-    "@neutrinojs/banner": "~9.1.0",
-    "@neutrinojs/compile-loader": "9.1.0",
-    "source-map-support": "^0.5.16",
-    "chalk": "~3.0.0",
-    "selfsigned": "1.10.7",
-    "del": "5.1.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
-    "@babel/preset-typescript": "^7.8.3",
-    "@babel/plugin-proposal-decorators": "^7.8.3",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "babel-plugin-smart-webpack-import": "1.6.0",
-    "babel-loader": "^8.0.6",
-    "native-addon-loader": "^2.0.1",
-    "typescript": "^3.7.4",
-    "babel-merge": "^3.0.0",
-    "deepmerge": "^1.5.2",
-    "circular-dependency-plugin": "5.2.0",
-    "smart-source-map-loader": "1.1.0",
-    "git-revision-webpack-plugin": "3.0.4",
-    "env-ci": "5.0.1",
-    "webpackbar": "4.0.0",
-    "core-js": "3.6.4"
+    "@neutrinojs/node": "~9.3.0",
+    "@neutrinojs/clean": "~9.3.0",
+    "@neutrinojs/banner": "~9.3.0",
+	 "@constgen/neutrino-babel-loader": "~1.5.0",
+	 "@constgen/neutrino-revision": "~1.7.0",
+	 "@constgen/neutrino-progress": "~1.5.0",
+	 "@constgen/neutrino-dependency": "1.5.0",
+	 "@constgen/neutrino-sourcemap": "~1.7.0",
+	 "@constgen/neutrino-optimization": "~1.6.0",
+	 "@constgen/neutrino-mode": "~1.5.0",
+	 "@constgen/neutrino-node-loader": "~1.5.0",
+	 "@constgen/neutrino-koa-launcher": "~1.6.0",
+    "deepmerge": "~4.2.2"
   },
   "peerDependencies": {
     "neutrino": "^9.0.0",
-    "webpack": "^4.0.0",
-    "koa": "^2.3.0"
+    "webpack": "^4.0.0"
   },
   "devDependencies": {
-    "neutrino": "^9.1.0",
+    "neutrino": "^9.3.0",
     "webpack": "^4.0.0",
-    "eslint": "6.8.0",
-    "@constgen/eslint": "1.0.0"
+    "eslint": "7.8.1",
+    "@constgen/eslint": "2.2.0"
   },
   "files": [
     "src",

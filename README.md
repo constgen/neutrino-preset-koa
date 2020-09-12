@@ -22,7 +22,7 @@
 - You can change your files without restarting the server
 - TypeScript support
 - User-friendly building progress bar
-- Detect and warn about circular dependencies during build time
+- Detect and warn about circular and duplicated dependencies during the build time
 - Git revision information through environment variables (VERSION, COMMITHASH, BRANCH)
 - Consider external dependencies sourcemaps for better debugging during development
 - Debug console cleared on every file change. Your outdated logs will be removed
@@ -38,6 +38,7 @@
 
 - Node.js v10+
 - Neutrino v9
+- Webpack v4
 - Koa v2.3+
 
 ## Installation
@@ -99,8 +100,8 @@ module.exports = new Koa()
          success: true
       }
    })
-   .on('error', function (err, ctx) {
-      console.error(err, ctx)
+   .on('error', function (err, context) {
+      console.error(err, context)
    })
 
 // don't call .listen()
@@ -244,7 +245,9 @@ Disabling the launcher not for debugging purposes is not recommended. Probably y
 
 ### Port
 
-There are multiple ways to customize the HTTP port of your application server.
+There are multiple ways to customize the HTTP port of your application server:
+
+#### Custom port
 
 You can configure a **default** port of the server in options using `server.port` property in the [preset options](#preset-options). For example:
 
@@ -256,11 +259,13 @@ koa({
 })
 ```
 
-Now your server will start on `8080` in both production and development modes. But this port is considered **default** and may be overridden any time by `PORT` environment variable. This may be useful for production environments as the server will check `process.env.PORT` in the runtime first and then fallback to a port you have defined.
+Now your server will start on `8080` in both production and development modes.
 
-The default behavior of port when not configured is to default to `80` on production and to take random free default port on development.
+#### Automatic discovering
 
-You can choose random free port on both production and development by passing one of these values: `false`, `null`, `0`. For example:
+The default behavior of port when not configured is to default to `80`/`443` on production and to take random free default port on development.
+
+You can choose random free port on both production and development by passing one of these values to the `server.port` [preset option](#preset-options): `false`, `null`, `0`. For example:
 
 ```js
 koa({
@@ -269,6 +274,10 @@ koa({
    }
 })
 ```
+
+#### Environment variable
+
+Even when port is customized in [preset options](#preset-options) it is considered **default** and may be overridden any time by `PORT` environment variable. This may be useful for production environments as the server will check `process.env.PORT` in the runtime first and then fallback to a port you have defined.
 
 `PORT` environment variable will always have a priority over any configuration.
 
@@ -299,19 +308,10 @@ koa({
    server: {
       ssl: {
          cert: path.resolve(__dirname, './ssl/ssl.cert'),
-         key: path.resolve(__dirname, './ssl/ssl.key')
+         key : './ssl/ssl.key' // a relative path to the project root also can be used
       }
    }
 })
-```
-
-A relative path to the project root also can be used
-
-```json
-{
-   cert: './ssl/ssl.cert',
-   key: './ssl/ssl.key'
-}
 ```
 
 If you run in development mode and want to use a temporary locally self-signed certificate you may configure it like this
@@ -389,16 +389,16 @@ Sometime you want to extend Webpack configuration with custom loaders or plugins
 For example, you can add [TypeScript checking](https://www.npmjs.com/package/fork-ts-checker-webpack-plugin)
 
 ```js
-let koa = require('neutrino-preset-koa')
+let koa       = require('neutrino-preset-koa')
 let TsChecker = require('fork-ts-checker-webpack-plugin')
 
 module.exports = {
    use: [
       koa(),
-      function (neutrino) {
-         let prodMode = (process.env.NODE_ENV === 'production')
+      function tsCheckMiddleware (neutrino) {
+         let productionMode = (process.env.NODE_ENV === 'production')
 
-         if (prodMode) return
+         if (productionMode) return
 
          neutrino.config
             .plugin('ts-checker')
@@ -423,8 +423,8 @@ Specifically for this plugin you also need to create `tsconfig.json` file
       "moduleResolution": "node",
       "esModuleInterop": true
    },
-   "include": ["src/**/*"],
-   "exclude": ["node_modules"]
+   "include": ["src/**/*", "test/**/*"],
+   "exclude": ["node_modules", "build/**/*"]
 }
 ```
 
@@ -471,13 +471,13 @@ In case your application will not finish for some reason in 10 seconds, there is
 Server killed, due to timeout
 ```
 
-Graceful Shutdown works correctly only in a built version which is started using
+Graceful Shutdown works correctly on all platforms only in a built version which is started using
 
 ```bash
 node .
 ```
 
-This is another reason to use this command on a production environment. It can't work properly when you start the server as a child process of `npm start`.
+This is another reason to use this command on a production environment. It may not work properly when you start the server as a child process of `npm start`.
 
 ## VSCode tips
 
