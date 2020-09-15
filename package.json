@@ -30,12 +30,12 @@
     "@neutrinojs/node": "~9.4.0",
     "@neutrinojs/clean": "~9.4.0",
     "@neutrinojs/banner": "~9.4.0",
-	 "@constgen/neutrino-babel-loader": "~1.9.0",
+	 "@constgen/neutrino-babel-loader": "~1.9.1",
 	 "@constgen/neutrino-revision": "~1.7.0",
 	 "@constgen/neutrino-progress": "~1.5.0",
 	 "@constgen/neutrino-dependency": "~1.9.0",
-	 "@constgen/neutrino-sourcemap": "~1.9.0",
-	 "@constgen/neutrino-optimization": "~1.6.0",
+	 "@constgen/neutrino-sourcemap": "~1.9.1",
+	 "@constgen/neutrino-optimization": "~1.9.1",
 	 "@constgen/neutrino-mode": "~1.5.0",
 	 "@constgen/neutrino-node-loader": "~1.9.0",
 	 "@constgen/neutrino-koa-launcher": "~1.6.0",
@@ -48,7 +48,7 @@
   "devDependencies": {
     "neutrino": "^9.3.0",
     "webpack": "^4.0.0",
-    "eslint": "7.8.1",
+    "eslint": "7.9.0",
     "@constgen/eslint": "2.2.0"
   },
   "files": [
